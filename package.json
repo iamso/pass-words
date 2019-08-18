@@ -1,6 +1,6 @@
 {
-  "name": "pass-words",
-  "version": "0.1.0",
+  "name": "@iamso/pass-words",
+  "version": "0.2.0",
   "description": "Creates a set of random words.",
   "main": "index.js",
   "bin": {

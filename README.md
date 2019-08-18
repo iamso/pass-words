@@ -5,7 +5,7 @@ Creates a set of random words, that can be used as passwords or passphrases.
 ## Install
 
 ```bash
-npm install -g pass-words
+npm install -g @iamso/pass-words
 ```
 
 ## Usage
