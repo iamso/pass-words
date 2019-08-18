@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Pass Words</title>
+  <style>
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      color: #333;
+      display: flex;
+      flex-flow: column;
+      justify-content: flex-start;
+      align-content: center;
+      align-items: center;
+      font-family: system, -apple-system, BlinkMacSystemFont, ".SFNSText-Regular", "San Francisco", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, Oxygen-Sans, Ubuntu, Cantarell, "Lucida Grande", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-weight: 300;
+      line-height: 1.3;
+      overflow: auto;
+      overflow: overlay;
+      -ms-overflow-style: -ms-autohiding-scrollbar;
+      -webkit-overflow-scrolling: touch;
+      -webkit-font-smoothing: antialiased;
+      -moz-font-smoothing: antialiased;
+      -ms-font-smoothing: antialiased;
+      -o-font-smoothing: antialiased;
+      font-smoothing: antialiased;
+      -webkit-text-rendering: optimizeLegibility;
+      -moz-text-rendering: optimizeLegibility;
+      -ms-text-rendering: optimizeLegibility;
+      -o-text-rendering: optimizeLegibility;
+      text-rendering: optimizeLegibility;
+      -moz-osx-font-smoothing: grayscale;
+      text-size-adjust: none;
+    }
+
+    .words {
+      margin: auto;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .words__input {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      color: transparent;
+      outline: none;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .words__display {
+      font-family: Menlo, Monaco, Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", "Courier New", Courier, monospace;
+      font-size: 1.75em;
+      font-weight: 700;
+      margin: 0 0 1.25em;
+    }
+
+    .words__message--blink {
+      animation: blink 2s ease-in forwards;
+    }
+
+    .words__button {
+      appearance: none;
+      background: transparent;
+      border: 0.125em solid transparent;
+      border-radius: 0.3125em;
+      color: #ccc;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 1em;
+      font-weight: 700;
+      margin: 0.25em;
+      outline: 0;
+      padding: 0.5em 1em;
+      text-transform: uppercase;
+      transition: 0.3s ease-out;
+    }
+
+    .words__button:hover {
+      border-color: currentColor;
+      color: #333;
+    }
+
+    .words__button--copy {
+      border-color: currentColor;
+      color: #aaa;
+    }
+
+    @keyframes blink {
+      0% {
+        color: #008800;
+      }
+      100% {
+        color: #333;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="words">
+    <input type="text" class="words__input" readonly>
+    <div class="words__display"></div>
+    <button type="button" class="words__button words__button--reload">reload</button>
+    <button type="button" class="words__button words__button--copy">copy</button>
+  </div>
+
+  <script>
+    const input = document.querySelector('.words__input');
+    const display = document.querySelector('.words__display');
+    const reload = document.querySelector('.words__button--reload');
+    const copy = document.querySelector('.words__button--copy');
+
+    copy.addEventListener('click', e => {
+      e.preventDefault();
+
+      input.readOnly = false;
+      input.focus();
+      input.setSelectionRange(0, input.value.length);
+      document.execCommand('copy');
+      input.setSelectionRange(0, 0);
+      input.readOnly = true;
+      input.blur();
+
+      display.addEventListener('animationend', e => {
+        display.classList.remove('words__message--blink');
+        copy.classList.remove('words__message--blink');
+        copy.textContent = 'copy';
+      }, { once: true });
+      display.classList.add('words__message--blink');
+      copy.classList.add('words__message--blink');
+      copy.textContent = 'copied';
+    });
+
+    reload.addEventListener('click', e => {
+      getWords();
+    });
+
+    async function getWords() {
+      const words = await fetch('/api?words=8').then(response => response.text()).catch(error => 'something went wrong');
+      input.value = words;
+      display.textContent = words;
+    }
+
+    getWords();
+  </script>
+</body>
+</html>
